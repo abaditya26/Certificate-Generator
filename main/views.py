@@ -2,6 +2,8 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, logout, login
 
+from main.models import UserModel
+
 
 def sign_out(request):
     logout(request)
@@ -29,4 +31,5 @@ def homepage(request):
 
 
 def dash(request):
-    return render(request, 'dashboard.html')
+    user = UserModel.objects.filter(uid=request.user.username).get()
+    return render(request, 'dashboard.html', {'user': user})

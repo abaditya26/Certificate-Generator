@@ -89,8 +89,8 @@
             <div class="col-md-4">
                 <div class="container text-center" style="margin-top: 6%;">
                     <h4 class="h4">Welcome  </h4>
-                    <img class="avatar" src="https://adityabodhankar.me/static/images/mf-avatar.svg"> <br><br>
-                    <h1 class="display-6" style="font-weight: 600;">Aditya Bodhankar</h1>
+                    <img class="avatar" style="width: 100%; max-width: 200px; border-radius: 50%;" src="{{ user.profile}}"> <br><br>
+                    <h1 class="display-6" style="font-weight: 600;">{{ user.name}}</h1>
                 </div>
             </div>
             <div class="col-md-8">
@@ -98,23 +98,23 @@
                     <table class="table table-stripped table-hover">
                         <tr>
                             <th>Name</th>
-                            <td>Aditya Ashok Bodhankar</td>
+                            <td>{{ user.name}}</td>
                         </tr>
                         <tr>
                             <th>Registration No</th>
-                            <td>12120075</td>
+                            <td>{{ user.regNo }}</td>
                         </tr>
                         <tr>
                             <th>Email</th>
-                            <td>aditya.bodhankar21@vit.edu</td>
+                            <td>{{ user.email}}</td>
                         </tr>
                         <tr>
                             <th>Mobile</th>
-                            <td>9325880972</td>
+                            <td>{{ user.mobile }}</td>
                         </tr>
                         <tr>
                             <th>Division</th>
-                            <td>AIDS-B</td>
+                            <td>{{ user.div }}</td>
                         </tr>
                     </table>
                 </div>
