@@ -3,4 +3,6 @@ from django.views.generic import TemplateView
 
 from main import views
 
-urlpatterns = []
+urlpatterns = [
+    path('', views.homepage)
+]
