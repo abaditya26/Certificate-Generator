@@ -39,11 +39,6 @@
             padding-right: 20px;
 
         }
-        @media (min-width: 780px){
-            #details-table{
-                margin-top: 10%;
-            }
-        }
     </style>
 </head>
 
@@ -53,7 +48,7 @@
 
         <nav class="navbar navbar-expand-lg navbar-light">
             <div class="container-fluid">
-                <a class="navbar-brand" href="#" style="padding: 30px;">
+                <a class="navbar-brand" href="./dash" style="padding: 30px;">
                     <h3 class="display-6">Document Generator</h3>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
@@ -64,10 +59,10 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto ">
                         <li class="nav-item">
-                            <a class="nav-link" href="#">HOME</a>
+                            <a class="nav-link" href="./dash">HOME</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#requests">CERTIFICATES</a>
+                            <a class="nav-link" href="#">CERTIFICATES</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">QUERY</a>
@@ -83,54 +78,75 @@
         </nav>
     </div>
 
-
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4">
-                <div class="container text-center" style="margin-top: 6%;">
-                    <h4 class="h4">Welcome  </h4>
-                    <img class="avatar" style="width: 100%; max-width: 200px; border-radius: 50%;" src="{{ user.profile}}"> <br><br>
-                    <h1 class="display-6" style="font-weight: 600;">{{ user.name}}</h1>
-                </div>
-            </div>
-            <div class="col-md-8">
-                <div class="container" id="details-table">
-                    <table class="table table-stripped table-hover">
-                        <tr>
-                            <th>Name</th>
-                            <td>{{ user.name}}</td>
-                        </tr>
-                        <tr>
-                            <th>Registration No</th>
-                            <td>{{ user.regNo }}</td>
-                        </tr>
-                        <tr>
-                            <th>Email</th>
-                            <td>{{ user.email}}</td>
-                        </tr>
-                        <tr>
-                            <th>Mobile</th>
-                            <td>{{ user.mobile }}</td>
-                        </tr>
-                        <tr>
-                            <th>Division</th>
-                            <td>{{ user.div }}</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
+    <center>
+        <h4>
+            Apply For Certificate
+        </h4>
+    </center>
+    <br>
+    <div class="container"
+        style="border: ridge 1px; border-radius: 20px; border-color: black; padding: 10px; margin-bottom: 20px; max-width: 800px;">
+        <div class="container" id="details-table">
+            <table class="table table-stripped table-hover">
+                <tr>
+                    <th>Name</th>
+                    <td>{{ user.name}}</td>
+                </tr>
+                <tr>
+                    <th>Registration No</th>
+                    <td>{{ user.regNo }}</td>
+                </tr>
+                <tr>
+                    <th>Email</th>
+                    <td>{{ user.email }}</td>
+                </tr>
+                <tr>
+                    <th>Mobile</th>
+                    <td>{{ user.mobile }}</td>
+                </tr>
+                <tr>
+                    <th>Division</th>
+                    <td>{{ user.div }}</td>
+                </tr>
+            </table>
         </div>
+        <br><br>
+        <center>
+            <h4 class="h4">
+                Select Certificate From Below
+            </h4>
+        </center>
+        <form action="" method="POST" onsubmit="return validateForm()">
+            {% csrf_token %}
+            <input type="hidden" name="uid" value="{{ user.uid }}">
+            <select name="certificate" id="certificate" class="form-control">
+                <option value="default">--Select Option From Below--</option>
+                <option value="bonafide">Bonafide Certificate</option>
+            </select>
+            <br>
+            <center>
+                <input type="submit" value="Apply" class="btn btn-outline-success">
+            </center>
+            <br>
+            <center>
+                <small style="color: red;">*Validate data before submitting. If any change in details. Please contact
+                    Co-ordinator.</small>
+            </center>
+        </form>
     </div>
+    <br>
     <center>
         <hr class="hr" style="max-width: 90%;">
     </center>
+    <br>
 
     <div class="container" style="margin-top: 4%;" id="requests">
         <center>
             <h4>
-                Recent Certificates
+                Your Certificates
             </h4>
         </center>
+        <br>
         <table class="table table-stripped table-hover">
             <thead>
                 <th>
@@ -175,15 +191,22 @@
                 </tr>
             </tbody>
         </table>
-        <center>
-            <a href="./certificates" class="btn btn-outline-secondary">View All Certificates/Request New</a>
-        </center>
     </div>
-    <br><br>
+    <br>
 
+    <script>
+        function validateForm() {
+            var cer = document.getElementById('certificate').value;
+            console.log(cer);
+            if (cer == "default")
+                return false;
+            return true;
+        }
+    </script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
         crossorigin="anonymous"></script>
+
 </body>
 
 </html>

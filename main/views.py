@@ -33,3 +33,8 @@ def homepage(request):
 def dash(request):
     user = UserModel.objects.filter(uid=request.user.username).get()
     return render(request, 'dashboard.html', {'user': user})
+
+
+def certificates(request):
+    user = UserModel.objects.filter(uid=request.user.username).get()
+    return render(request, 'certificates.html', {'user': user})
