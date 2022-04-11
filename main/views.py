@@ -3,8 +3,17 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, logout, login
 
 
+def sign_out(request):
+    logout(request)
+    return redirect('/')
+
+
 # Create your views here.
 def homepage(request):
+    if request.user.is_authenticated:
+        if not request.user.has_usable_password():
+            return redirect("/logout")
+        return redirect("/dash")
     if request.method == "POST":
         email = request.POST["email"]
         password = request.POST["password"]
@@ -17,3 +26,7 @@ def homepage(request):
             print("User Invalid")
             messages.info(request, "User Credentials Not Match")
     return render(request, 'homepage.html')
+
+
+def dash(request):
+    return render(request, 'dashboard.html')
