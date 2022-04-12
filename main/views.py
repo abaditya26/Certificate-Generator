@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, logout, login
 
-from main.models import UserModel
+from main.models import UserModel, CertificateRequestModel
 
 
 def sign_out(request):
@@ -34,8 +34,9 @@ def dash(request):
         return redirect("/login")
     if not request.user.has_usable_password():
         return redirect("/logout")
-    user = UserModel.objects.filter(uid=request.user.username).get()
-    return render(request, 'dashboard.html', {'user': user})
+    user = UserModel.objects.filter(uid=request.user.username).first()
+    certificate_list = CertificateRequestModel.objects.filter(student_id=request.user.username)
+    return render(request, 'dashboard.html', {'user': user, 'certificates': certificate_list})
 
 
 def certificates(request):
@@ -44,4 +45,5 @@ def certificates(request):
     if not request.user.has_usable_password():
         return redirect("/logout")
     user = UserModel.objects.filter(uid=request.user.username).get()
-    return render(request, 'certificates.html', {'user': user})
+    certificate_list = CertificateRequestModel.objects.filter(student_id=request.user.username)
+    return render(request, 'certificates.html', {'user': user, 'certificates': certificate_list})

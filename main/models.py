@@ -21,3 +21,12 @@ class UserModel(models.Model):
     course = models.CharField(max_length=100)
     duration = models.CharField(max_length=100)
 
+
+class CertificateRequestModel(models.Model):
+    id = models.AutoField(primary_key=True)
+    student_id = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
+    request_date = models.CharField(max_length=20)
+    issue_date = models.CharField(max_length=20, default="-")
+    approved = models.BooleanField(default=False)
+    url = models.CharField(max_length=200, default="#")

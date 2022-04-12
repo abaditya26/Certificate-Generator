@@ -153,26 +153,35 @@
                 </th>
             </thead>
             <tbody>
+            {% for certificate in certificates %}
+
+
                 <tr>
                     <td>
-                        1
+                        {{ certificate.id }}
                     </td>
                     <td>
-                        Bonafide Certificate
+                        {{ certificate.name}}
                     </td>
                     <td>
-                        10/04/2022
+                        {{ certificate.request_date }}
                     </td>
                     <td>
-                        11/04/2022
+                        {{ certificate.issue_date }}
                     </td>
                     <td>
-                        Approved
+                        {% if certificate.approved %}
+                            Approved
+                        {% else %}
+                            Pending
+                        {% endif %}
                     </td>
                     <td>
-                        <a href="#" class="btn btn-outline-success">View Certificate</a>
+                        <a href="{{ certificate.link }}" class="btn btn-outline-success">View Certificate</a>
                     </td>
                 </tr>
+
+            {% endfor %}
             </tbody>
         </table>
         <center>
