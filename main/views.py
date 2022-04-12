@@ -10,11 +10,27 @@ def sign_out(request):
     return redirect('/')
 
 
+def validate_admin_sign_in(request):
+    if request.user.is_staff:
+        return True
+    else:
+        return False
+
+
+def validate_sign_in(request):
+    if not request.user.is_authenticated:
+        return False
+    else:
+        if not request.user.has_usable_password():
+            logout(request)
+            return False
+        else:
+            return True
+
+
 # Create your views here.
 def homepage(request):
-    if request.user.is_authenticated:
-        if not request.user.has_usable_password():
-            return redirect("/logout")
+    if validate_sign_in(request):
         return redirect("/dash")
     if request.method == "POST":
         email = request.POST["email"]
@@ -30,20 +46,20 @@ def homepage(request):
 
 
 def dash(request):
-    if not request.user.is_authenticated:
-        return redirect("/login")
-    if not request.user.has_usable_password():
-        return redirect("/logout")
+    if not validate_sign_in(request):
+        return redirect("/")
+    if validate_admin_sign_in(request):
+        return redirect("/admin")
     user = UserModel.objects.filter(uid=request.user.username).first()
     certificate_list = CertificateRequestModel.objects.filter(student_id=request.user.username)
     return render(request, 'dashboard.html', {'user': user, 'certificates': certificate_list})
 
 
 def certificates(request):
-    if not request.user.is_authenticated:
-        return redirect("/login")
-    if not request.user.has_usable_password():
-        return redirect("/logout")
+    if not validate_sign_in(request):
+        return redirect("/")
+    if validate_admin_sign_in(request):
+        return redirect("/admin")
     user = UserModel.objects.filter(uid=request.user.username).get()
     certificate_list = CertificateRequestModel.objects.filter(student_id=request.user.username)
     return render(request, 'certificates.html', {'user': user, 'certificates': certificate_list})
