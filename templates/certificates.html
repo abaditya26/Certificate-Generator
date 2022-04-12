@@ -105,8 +105,40 @@
                     <td>{{ user.mobile }}</td>
                 </tr>
                 <tr>
+                    <th>Gender</th>
+                    <td>{{ user.gender }}</td>
+                </tr>
+                <tr>
+                    <th>Category</th>
+                    <td>{{ user.category }}</td>
+                </tr>
+                <tr>
+                    <th>Caste</th>
+                    <td>{{ user.caste }}</td>
+                </tr>
+                <tr>
+                    <th>Sub Caste</th>
+                    <td>{{ user.sub_caste }}</td>
+                </tr>
+                <tr>
+                    <th>Nationality</th>
+                    <td>{{ user.nationality }}</td>
+                </tr>
+                <tr>
                     <th>Division</th>
                     <td>{{ user.div }}</td>
+                </tr>
+                <tr>
+                    <th>Year</th>
+                    <td>{{ user.year }}</td>
+                </tr>
+                <tr>
+                    <th>Degree</th>
+                    <td>{{ user.degree }}</td>
+                </tr>
+                <tr>
+                    <th>Duration</th>
+                    <td>{{ user.duration }}</td>
                 </tr>
             </table>
         </div>
@@ -196,10 +228,11 @@
 
     <script>
         function validateForm() {
-            var cer = document.getElementById('certificate').value;
-            console.log(cer);
-            if (cer == "default")
+            const cer = document.getElementById('certificate').value;
+            if (cer === "default") {
+                alert("Please Select Certificate to Apply.");
                 return false;
+            }
             return true;
         }
     </script>

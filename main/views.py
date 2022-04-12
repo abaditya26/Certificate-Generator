@@ -21,7 +21,6 @@ def homepage(request):
         password = request.POST["password"]
         user = authenticate(username=email, password=password)
         if user is not None:
-            print("User Logged in successfully")
             login(request, user)
             return redirect('./dash')
         else:
@@ -31,10 +30,18 @@ def homepage(request):
 
 
 def dash(request):
+    if not request.user.is_authenticated:
+        return redirect("/login")
+    if not request.user.has_usable_password():
+        return redirect("/logout")
     user = UserModel.objects.filter(uid=request.user.username).get()
     return render(request, 'dashboard.html', {'user': user})
 
 
 def certificates(request):
+    if not request.user.is_authenticated:
+        return redirect("/login")
+    if not request.user.has_usable_password():
+        return redirect("/logout")
     user = UserModel.objects.filter(uid=request.user.username).get()
     return render(request, 'certificates.html', {'user': user})
