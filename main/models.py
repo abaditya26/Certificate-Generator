@@ -30,3 +30,14 @@ class CertificateRequestModel(models.Model):
     issue_date = models.CharField(max_length=20, default="-")
     approved = models.BooleanField(default=False)
     url = models.CharField(max_length=200, default="#")
+
+
+class AdminModel(models.Model):
+    id = models.AutoField(primary_key=True)
+    uid = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
+    email = models.CharField(max_length=100)
+    profile = models.CharField(max_length=200)
+    mobile = models.CharField(max_length=20)
+    gender = models.CharField(max_length=20)
+    designation = models.CharField(max_length=100)

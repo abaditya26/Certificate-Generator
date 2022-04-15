@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, logout, login
 
-from main.models import UserModel, CertificateRequestModel
+from main.models import UserModel, CertificateRequestModel, AdminModel
 
 
 def sign_out(request):
@@ -63,3 +63,8 @@ def certificates(request):
     user = UserModel.objects.filter(uid=request.user.username).get()
     certificate_list = CertificateRequestModel.objects.filter(student_id=request.user.username)
     return render(request, 'certificates.html', {'user': user, 'certificates': certificate_list})
+
+
+def admin(request):
+    user = AdminModel.objects.filter(uid=request.user.username).get()
+    return render(request, 'admin.html', {'user': user})
