@@ -29,6 +29,7 @@ class CertificateRequestModel(models.Model):
     request_date = models.CharField(max_length=20)
     issue_date = models.CharField(max_length=20, default="-")
     approved = models.BooleanField(default=False)
+    status = models.CharField(default="Pending", max_length=30)
     url = models.CharField(max_length=200, default="#")
 
 
