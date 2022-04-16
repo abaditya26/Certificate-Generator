@@ -66,14 +66,19 @@ def certificates(request):
 
 
 def admin(request):
-    user = AdminModel.objects.filter(uid=request.user.username).get()
-    certificate_list = CertificateRequestModel.objects.filter(approved=False)
-    if len(certificate_list)==0:
-        no_certificates = True
-    else:
-        no_certificates = False
-    return render(request, 'admin.html', {'user': user, 'certificates': certificate_list, 'no_certificates': no_certificates})
+    try:
+        user = AdminModel.objects.filter(uid=request.user.username).get()
+        certificate_list = CertificateRequestModel.objects.filter(approved=False).order_by('request_date')
+        if len(certificate_list) == 0:
+            no_certificates = True
+        else:
+            no_certificates = False
+        return render(request, 'admin.html',
+                      {'user': user, 'certificates': certificate_list, 'no_certificates': no_certificates})
+    except AdminModel.DoesNotExist:
+        return redirect('/')
 
 
 def admin_certificates_page(request):
-    certificate_list = CertificateRequestModel.objects.order_by('approved')
+    certificate_list = CertificateRequestModel.objects.order_by('request_date').order_by('approved').all()
+    return render(request, 'admin_view_certificates.html', {'certificates': certificate_list})
