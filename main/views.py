@@ -60,6 +60,9 @@ def certificates(request):
         return redirect("/")
     if validate_admin_sign_in(request):
         return redirect("/admin")
+    if request.method == "POST":
+        print(request.POST["certificate"])
+        # return
     user = UserModel.objects.filter(uid=request.user.username).get()
     certificate_list = CertificateRequestModel.objects.filter(student_id=request.user.username)
     return render(request, 'certificates.html', {'user': user, 'certificates': certificate_list})
@@ -82,3 +85,15 @@ def admin(request):
 def admin_certificates_page(request):
     certificate_list = CertificateRequestModel.objects.order_by('request_date').order_by('approved').all()
     return render(request, 'admin_view_certificates.html', {'certificates': certificate_list})
+
+
+def certificate_request_details(request):
+    try:
+        certificate = CertificateRequestModel.objects.filter(id=request.GET["c_id"]).get()
+        user = UserModel.objects.filter(uid=certificate.student_id).get()
+        return render(request, 'cer_details.html', {'user': user, 'certificate': certificate})
+    except UserModel.DoesNotExist:
+        print("Error")
+    except CertificateRequestModel.DoesNotExist:
+        print("Np Certificate Found")
+    return redirect('/')
