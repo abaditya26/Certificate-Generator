@@ -143,7 +143,7 @@
                     Request Date
                 </th>
                 <th>
-                    Issue Date
+                    Status Updated On
                 </th>
                 <th>
                     Status
@@ -153,9 +153,19 @@
                 </th>
             </thead>
             <tbody>
+                {% if no_certificates %}
+                    <tr>
+                        <td colspan="6">
+                            <center>
+                                <h3>
+                                    No Data Found
+                                </h3>
+                            </center>
+                        </td>
+                    </tr>
+                    {% endif %}
+
             {% for certificate in certificates %}
-
-
                 <tr>
                     <td>
                         {{ certificate.id }}
@@ -170,11 +180,7 @@
                         {{ certificate.last_update_date }}
                     </td>
                     <td>
-                        {% if certificate.approved %}
-                            Approved
-                        {% else %}
-                            Pending
-                        {% endif %}
+                        {{ certificate.status }}
                     </td>
                     <td>
                         <a href="{{ certificate.link }}" class="btn btn-outline-success">View Certificate</a>

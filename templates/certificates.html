@@ -202,6 +202,17 @@
             </thead>
             <tbody>
 
+                {% if no_certificates %}
+                    <tr>
+                        <td colspan="6">
+                            <center>
+                                <h3>
+                                    No Data Found
+                                </h3>
+                            </center>
+                        </td>
+                    </tr>
+                    {% endif %}
             {% for certificate in certificates %}
                 <tr>
                     <td>
