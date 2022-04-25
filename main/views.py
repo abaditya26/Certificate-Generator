@@ -64,6 +64,13 @@ def dash(request):
 
 
 def certificates(request):
+    if request.method == "POST":
+        print(request.POST["uid"])
+        print(request.POST["certificate"])
+        cer = CertificateRequestModel.objects.create(student_id=request.POST["uid"],
+                                                     name=request.POST["certificate"],
+                                                     request_date=datetime.date.today(),)
+        cer.save()
     if not validate_sign_in(request):
         return redirect("/")
     if validate_admin_sign_in(request):
@@ -84,7 +91,7 @@ def certificates(request):
 def admin(request):
     try:
         user = AdminModel.objects.filter(uid=request.user.username).get()
-        certificate_list = CertificateRequestModel.objects.filter(approved=False).filter(status="pending").order_by(
+        certificate_list = CertificateRequestModel.objects.filter(approved=False).filter(status="Pending").order_by(
             'request_date')
         if len(certificate_list) == 0:
             no_certificates = True
@@ -122,12 +129,7 @@ def certificate_request_details(request):
     try:
         certificate = CertificateRequestModel.objects.filter(id=request.GET["c_id"]).get()
         user = UserModel.objects.filter(uid=certificate.student_id).get()
-        if len(certificate) == 0:
-            no_certificates = True
-        else:
-            no_certificates = False
-        return render(request, 'cer_details.html', {'user': user, 'certificate': certificate,
-                                                    'no_certificates': no_certificates})
+        return render(request, 'cer_details.html', {'user': user, 'certificate': certificate})
     except UserModel.DoesNotExist:
         print("Error")
     except CertificateRequestModel.DoesNotExist:

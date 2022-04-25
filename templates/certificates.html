@@ -197,6 +197,9 @@
                     Status
                 </th>
                 <th>
+                    Comment
+                </th>
+                <th>
                     Action
                 </th>
             </thead>
@@ -228,11 +231,10 @@
                         {{ certificate.last_update_date }}
                     </td>
                     <td>
-                        {% if certificate.approved %}
-                            Approved
-                        {% else %}
-                            Pending
-                        {% endif %}
+                        {{ certificate.status }}
+                    </td>
+                    <td>
+                        {{ certificate.comment }}
                     </td>
                     <td>
                         <a href="{{ certificate.link }}" class="btn btn-outline-success">View Certificate</a>
