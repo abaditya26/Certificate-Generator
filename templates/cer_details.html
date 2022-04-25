@@ -66,10 +66,10 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-auto ">
                         <li class="nav-item">
-                            <a class="nav-link" href="#">HOME</a>
+                            <a class="nav-link" href="./">HOME</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="#requests">CERTIFICATES</a>
+                            <a class="nav-link" href="./#requests">CERTIFICATES</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">QUERY</a>
@@ -156,8 +156,8 @@
                         <td>{{ certificate.request_date }}</td>
                     </tr>
                     <tr>
-                        <th>Approved On</th>
-                        <td>{{ certificate.issue_date }}</td>
+                        <th>Status Updated On</th>
+                        <td>{{ certificate.last_update_date }}</td>
                     </tr>
                     <tr>
                         <th>Status</th>
@@ -165,7 +165,9 @@
                     </tr>
                     <tr>
                         <td colspan="2">
-                            <form action="#" method="post">   
+                            <form action="" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="id" id="id" value="{{ certificate.id }}">
                                 <div class="form-group">
                                     <label for="comment">Add Comment On Request</label>
                                     <textarea name="comment" id="comment" cols="30" rows="10" class="form-control" placeholder="Enter Comment">{{ certificate.comment }}</textarea>

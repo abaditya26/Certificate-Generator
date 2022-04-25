@@ -1,6 +1,9 @@
+import datetime
+
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, logout, login
+from django.utils.datastructures import MultiValueDictKeyError
 
 from main.models import UserModel, CertificateRequestModel, AdminModel
 
@@ -71,7 +74,7 @@ def certificates(request):
 def admin(request):
     try:
         user = AdminModel.objects.filter(uid=request.user.username).get()
-        certificate_list = CertificateRequestModel.objects.filter(approved=False).order_by('request_date')
+        certificate_list = CertificateRequestModel.objects.filter(approved=False).filter(status="pending").order_by('request_date')
         if len(certificate_list) == 0:
             no_certificates = True
         else:
@@ -88,6 +91,18 @@ def admin_certificates_page(request):
 
 
 def certificate_request_details(request):
+    if request.method == "POST":
+        certificate = CertificateRequestModel.objects.filter(id=request.POST["id"]).get()
+        certificate.comment = request.POST["comment"]
+        certificate.last_update_date = datetime.date.today()
+        try:
+            if request.POST["accept"]:
+                certificate.approved = True
+                certificate.status = "approved"
+        except MultiValueDictKeyError:
+            certificate.approved = False
+            certificate.status = "rejected"
+        certificate.save()
     try:
         certificate = CertificateRequestModel.objects.filter(id=request.GET["c_id"]).get()
         user = UserModel.objects.filter(uid=certificate.student_id).get()
