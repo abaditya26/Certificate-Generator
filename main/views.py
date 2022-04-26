@@ -7,6 +7,11 @@ from django.utils.datastructures import MultiValueDictKeyError
 
 from main.models import UserModel, CertificateRequestModel, AdminModel
 
+from io import BytesIO
+from django.http import HttpResponse
+from django.template.loader import get_template, render_to_string
+from xhtml2pdf import pisa
+
 
 def sign_out(request):
     logout(request)
@@ -69,7 +74,7 @@ def certificates(request):
         print(request.POST["certificate"])
         cer = CertificateRequestModel.objects.create(student_id=request.POST["uid"],
                                                      name=request.POST["certificate"],
-                                                     request_date=datetime.date.today(),)
+                                                     request_date=datetime.date.today(), )
         cer.save()
     if not validate_sign_in(request):
         return redirect("/")
@@ -135,3 +140,23 @@ def certificate_request_details(request):
     except CertificateRequestModel.DoesNotExist:
         print("Np Certificate Found")
     return redirect('/')
+
+
+def html_to_pdf(template_src, context_dict=None):
+    if context_dict is None:
+        context_dict = {}
+    template = get_template(template_src)
+    html = template.render(context_dict)
+    result = BytesIO()
+    pdf = pisa.pisaDocument(BytesIO(html.encode("ISO-8859-1")), result)
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type='application/pdf')
+    return None
+
+
+def view_certificate(request):
+    certificate = CertificateRequestModel.objects.filter(id=request.GET["c_id"]).get()
+    user = UserModel.objects.filter(uid=certificate.student_id).get()
+    open('templates/temp.html', "w").write(render_to_string('certificates/bonafide.html', {'user': user}))
+    pdf = html_to_pdf('temp.html')
+    return HttpResponse(pdf, content_type='application/pdf')
