@@ -155,8 +155,22 @@ def html_to_pdf(template_src, context_dict=None):
 
 
 def view_certificate(request):
+    if not validate_sign_in(request):
+        return redirect("/")
+    if validate_admin_sign_in(request):
+        return redirect("/admin")
     certificate = CertificateRequestModel.objects.filter(id=request.GET["c_id"]).get()
     user = UserModel.objects.filter(uid=certificate.student_id).get()
-    open('templates/temp.html', "w").write(render_to_string('certificates/bonafide.html', {'user': user}))
+    # validate the certificate is of the current user
+    if not certificate.approved:
+        print("not approved")
+        return redirect('/dash')
+    if not certificate.student_id == request.user.username:
+        print("invalid user")
+        return redirect("/dash")
+    if certificate.name=="bonafide":
+        open('templates/temp.html', "w").write(render_to_string('certificates/bonafide.html', {'user': user}))
+    else:
+        open('templates/temp.html', "w").write("<h1>Certificate Template Unavailable. Please Contact Coordinator.</h1>")
     pdf = html_to_pdf('temp.html')
     return HttpResponse(pdf, content_type='application/pdf')
