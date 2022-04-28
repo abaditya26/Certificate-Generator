@@ -1,16 +1,16 @@
 import datetime
+from io import BytesIO
 
 from django.contrib import messages
-from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, logout, login
+from django.contrib.auth.models import User
+from django.http import HttpResponse
+from django.shortcuts import render, redirect
+from django.template.loader import get_template, render_to_string
 from django.utils.datastructures import MultiValueDictKeyError
+from xhtml2pdf import pisa
 
 from main.models import UserModel, CertificateRequestModel, AdminModel
-
-from io import BytesIO
-from django.http import HttpResponse
-from django.template.loader import get_template, render_to_string
-from xhtml2pdf import pisa
 
 
 def sign_out(request):
@@ -76,6 +76,7 @@ def certificates(request):
                                                      name=request.POST["certificate"],
                                                      request_date=datetime.date.today(), )
         cer.save()
+        return redirect("/certificates")
     if not validate_sign_in(request):
         return redirect("/")
     if validate_admin_sign_in(request):
@@ -89,6 +90,7 @@ def certificates(request):
         no_certificates = True
     else:
         no_certificates = False
+    print("")
     return render(request, 'certificates.html', {'user': user, 'certificates': certificate_list,
                                                  'no_certificates': no_certificates})
 
@@ -127,6 +129,7 @@ def certificate_request_details(request):
             if request.POST["accept"]:
                 certificate.approved = True
                 certificate.status = "approved"
+                certificate.url="./view_certificate?c_id="+request.POST["id"]
         except MultiValueDictKeyError:
             certificate.approved = False
             certificate.status = "rejected"
@@ -175,7 +178,78 @@ def view_certificate(request):
     return HttpResponse(pdf, content_type='application/pdf')
 
 
+from pyexcel_xls import get_data as xls_get
+from pyexcel_xlsx import get_data as xlsx_get
+
+
 def user_list(request):
-    if request.method=="POST":
+    if request.method == "POST":
         print(request.FILES["user-file"])
+        try:
+            excel_file = request.FILES["user-file"]
+        except MultiValueDictKeyError:
+            print("ERROR")
+            return None
+        if str(excel_file).split('.')[-1] == "xls":
+            data = xls_get(excel_file)
+        elif str(excel_file).split(".")[-1] == "xlsx":
+            data = xlsx_get(excel_file)
+        else:
+            print("No File found")
+            return None
+        users = data["users"]
+        for user in users:
+            if user[0] == "id":
+                # check if format is maintained
+                if format_maintained(user):
+                    continue
+                else:
+                    print("format not maintained")
+                    return None
+            user_data = map_to_user_model(user)
+            print(user_data.uid)
+            # check if the user exists
+
+            # if exists then compare values and update if required
+            # else if user not exists then do insertion of data
+            add_new_user(user_data, str(user[2]))
     return render(request, 'users.html')
+
+
+def add_new_user(user, password):
+    user = User.objects.create_user(username=user.uid,
+                                    email=user.email,
+                                    password=password)
+    user.save()
+
+
+def map_to_user_model(user):
+    user_data = UserModel.objects.create(
+        uid=user[1],
+        name=user[3] + " " + user[4],
+        email=user[5],
+        gender=user[6],
+        category=user[7],
+        caste=user[8],
+        sub_caste=user[9],
+        nationality=user[10],
+        regNo=user[11],
+        mobile=user[12],
+        div=user[13],
+        profile=user[14],
+        year=user[15],
+        degree=user[16],
+        course=user[17],
+        duration=user[18]
+    )
+    return user_data
+
+
+def format_maintained(user):
+    if user[0] == "id" and user[1] == "uid" and user[2] == "password" and user[3] == "f_name" and \
+            user[4] == "l_name" and user[5] == "email" and user[6] == "gender" and user[7] == "category" and \
+            user[8] == "caste" and user[9] == "sub_caste" and user[10] == "nationality" and user[11] == "regNo" and \
+            user[12] == "mobile" and user[13] == "div" and user[14] == "profile" and \
+            user[15] == "year" and user[16] == "degree" and user[17] == "course" and user[18] == "duration":
+        return True
+    return False
