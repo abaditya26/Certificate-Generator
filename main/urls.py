@@ -14,4 +14,5 @@ urlpatterns = [
     path('admin', views.admin),
     path('admin_view_certificates', views.admin_certificates_page),
     path('admin_certificate_req', views.certificate_request_details),
+    path('users', views.user_list)
 ]

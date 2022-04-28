@@ -163,14 +163,19 @@ def view_certificate(request):
     user = UserModel.objects.filter(uid=certificate.student_id).get()
     # validate the certificate is of the current user
     if not certificate.approved:
-        print("not approved")
         return redirect('/dash')
     if not certificate.student_id == request.user.username:
-        print("invalid user")
         return redirect("/dash")
-    if certificate.name=="bonafide":
-        open('templates/temp.html', "w").write(render_to_string('certificates/bonafide.html', {'user': user}))
+    if certificate.name == "bonafide":
+        open('templates/temp.html', "w").write(render_to_string('certificates/bonafide.html',
+                                                                {'user': user, 'certificate': certificate}))
     else:
         open('templates/temp.html', "w").write("<h1>Certificate Template Unavailable. Please Contact Coordinator.</h1>")
     pdf = html_to_pdf('temp.html')
     return HttpResponse(pdf, content_type='application/pdf')
+
+
+def user_list(request):
+    if request.method=="POST":
+        print(request.FILES["user-file"])
+    return render(request, 'users.html')

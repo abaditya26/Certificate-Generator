@@ -1,0 +1,4 @@
+Django~=4.0.4
+xhtml2pdf~=0.2.7
+pyexcel-xls
+pyexcel-xlsx
