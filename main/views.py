@@ -9,6 +9,8 @@ from django.shortcuts import render, redirect
 from django.template.loader import get_template, render_to_string
 from django.utils.datastructures import MultiValueDictKeyError
 from xhtml2pdf import pisa
+from pyexcel_xls import get_data as xls_get
+from pyexcel_xlsx import get_data as xlsx_get
 
 from main.models import UserModel, CertificateRequestModel, AdminModel
 
@@ -129,7 +131,7 @@ def certificate_request_details(request):
             if request.POST["accept"]:
                 certificate.approved = True
                 certificate.status = "approved"
-                certificate.url="./view_certificate?c_id="+request.POST["id"]
+                certificate.url = "./view_certificate?c_id=" + request.POST["id"]
         except MultiValueDictKeyError:
             certificate.approved = False
             certificate.status = "rejected"
@@ -178,10 +180,6 @@ def view_certificate(request):
     return HttpResponse(pdf, content_type='application/pdf')
 
 
-from pyexcel_xls import get_data as xls_get
-from pyexcel_xlsx import get_data as xlsx_get
-
-
 def user_list(request):
     if request.method == "POST":
         print(request.FILES["user-file"])
@@ -207,24 +205,30 @@ def user_list(request):
                     print("format not maintained")
                     return None
             user_data = map_to_user_model(user)
-            print(user_data.uid)
             # check if the user exists
+            try:
+                # if exists then update
+                c_user = UserModel.objects.get(uid=user_data.uid)
+                print(c_user.uid)
+                user_data.id = c_user.id
+                user_data.save()
+            except UserModel.DoesNotExist:
+                # else if user not exists then do insertion of data
+                add_new_user(user_data, str(user[2]), user_data)
+    users = UserModel.objects.all()
+    return render(request, 'users.html', {'users': users})
 
-            # if exists then compare values and update if required
-            # else if user not exists then do insertion of data
-            add_new_user(user_data, str(user[2]))
-    return render(request, 'users.html')
 
-
-def add_new_user(user, password):
+def add_new_user(user, password, user_data):
     user = User.objects.create_user(username=user.uid,
                                     email=user.email,
                                     password=password)
     user.save()
+    user_data.save()
 
 
 def map_to_user_model(user):
-    user_data = UserModel.objects.create(
+    user_data = UserModel(
         uid=user[1],
         name=user[3] + " " + user[4],
         email=user[5],
@@ -253,3 +257,7 @@ def format_maintained(user):
             user[15] == "year" and user[16] == "degree" and user[17] == "course" and user[18] == "duration":
         return True
     return False
+
+
+def details(request):
+    return render(request, 'details.html')

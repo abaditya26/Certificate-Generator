@@ -117,6 +117,7 @@
             <h2>
                 Manage Users
             </h2>
+            <a href="#" class="btn btn-outline-primary">Download User Data</a>
         </center>
 
         <table class="table table-stripped table-hover">
@@ -138,23 +139,28 @@
                 </th>
             </thead>
             <tbody>
+             {% for user in users %}
+
+
                 <tr>
                     <td>
-                        12120075
+                        {{ user.regNo }}
                     </td>
                     <td>
-                        Aditya Ashok Bodhankar
+                        {{ user.name }}
                     </td>
                     <td>
-                        AI&DS
+                        {{ user.course }}
                     </td>
                     <td>
-                        Second Year
+                        {{ user.year}}
                     </td>
                     <td>
-                        <a href="#" class="btn btn-outline-success">View Details</a>
+                        <a href="./details?id={{ user.id }}" class="btn btn-outline-success">View Details</a>
                     </td>
                 </tr>
+
+             {% endfor %}
             </tbody>
         </table>
     </div>
