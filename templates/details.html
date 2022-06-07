@@ -95,90 +95,86 @@
         </center>
 
         <form action="#" method="post">
-
+            {% csrf_token %}
             <div class="form-group">
-                <label for="f_name">First Name</label>
-                <input type="text" name="f_name" id="f_name" class="form-control">
-            </div>
-            <div class="form-group">
-                <label for="l_name">Last Name</label>
-                <input type="text" name="l_name" id="l_name" class="form-control">
+                <label for="name">First Name</label>
+                <input type="text" required name="name" id="name" class="form-control" value="{{ user.name }}">
             </div>
             <div class="form-group">
                 <label for="email">Email</label>
-                <input type="email" name="email" id="email" class="form-control">
+                <input type="email" required name="email" id="email" class="form-control" value="{{ user.email }}">
             </div>
             <div class="form-grou">
                 <label for="gender">Gender</label> <br>
-                <input type="radio" name="gender" id="male" class="from-control">
+                <input type="radio" required name="gender" value="Male" id="male" class="from-control" {% if user.gender == "Male" %}checked{% endif %}>
                 <label for="male">Male</label> <br>
-                <input type="radio" name="gender" id="female" class="from-control">
+                <input type="radio" required name="gender" value="Female" id="female" class="from-control" {% if user.gender == "Female" %}checked{% endif %}>
                 <label for="female">Female</label> <br>
             </div>
             <div class="form-group">
                 <label for="category">Category</label>
-                <input type="text" name="category" id="category" class="form-control">
+                <input type="text" required name="category" id="category" class="form-control" value="{{ user.category }}">
             </div>
             <div class="form-group">
                 <label for="caste">Caste</label>
-                <input type="text" name="caste" id="caste" class="form-control">
+                <input type="text" required name="caste" id="caste" class="form-control" value="{{ user.caste }}">
             </div>
             <div class="form-group">
                 <label for="sub_caste">Sub Caste</label>
-                <input type="text" name="sub_caste" id="sub_caste" class="form-control">
+                <input type="text" required name="sub_caste" id="sub_caste" class="form-control" value="{{ user.sub_caste }}">
             </div>
             <div class="form-group">
                 <label for="nationality">Nationality</label>
-                <input type="text" name="nationality" id="nationality" class="form-control">
+                <input type="text" required name="nationality" id="nationality" class="form-control" value="{{ user.nationality }}">
             </div>
             <div class="form-group">
                 <label for="regNo">Registration Number</label>
-                <input type="text" name="regNo" id="regNo" class="form-control">
+                <input type="text" required name="regNo" id="regNo" class="form-control" value="{{ user.regNo }}">
             </div>
             <div class="form-group">
                 <label for="mobile">Mobile Number</label>
-                <input type="tel" name="mobile" id="mobile" class="form-control">
+                <input type="tel" required name="mobile" id="mobile" class="form-control" value="{{ user.mobile }}">
             </div>
             <div class="form-group">
                 <label for="division">Division</label>
-                <input type="text" name="division" id="division" class="form-control">
+                <input type="text" required name="division" id="division" class="form-control" value="{{ user.div }}">
             </div>
             <div class="form-group">
                 <label for="profile">Profile Image URL</label>
-                <input type="url" name="profile" id="profile" class="form-control">
+                <input type="url" required name="profile" id="profile" class="form-control" value="{{ user.profile }}">
             </div>
             <div class="form-group">
                 <label for="year">
                     Year
                 </label>
-                <select name="year" id="year" class="form-control">
-                    <option value="First Year">First Year</option>
-                    <option value="Second Year">Second Year</option>
-                    <option value="Third Year">Third Year</option>
-                    <option value="Forth Year">Forth Year</option>
+                <select required name="year" id="year" class="form-control">
+                    <option value="First Year" {% if user.year == "First Year" %}selected{% endif %}>First Year</option>
+                    <option value="Second Year" {% if user.year == "Second Year" %}selected{% endif %}>Second Year</option>
+                    <option value="Third Year" {% if user.year == "Third Year" %}selected{% endif %}>Third Year</option>
+                    <option value="Forth Year" {% if user.year == "Forth Year" %}selected{% endif %}>Forth Year</option>
                 </select>
             </div>
             <div class="form-group">
                 <label for="degree">Degree</label>
-                <input type="text" name="degree" id="degree" class="form-control">
+                <input type="text" required name="degree" id="degree" class="form-control" value="{{ user.degree }}">
             </div>
             <div class="form-group">
                 <label for="course">Course</label>
-                <input type="text" name="course" id="course" class="form-control">
+                <input type="text" required name="course" id="course" class="form-control" value="{{ user.course }}">
             </div>
             <div class="form-group">
                 <label for="duration">Duration</label>
-                <select name="duration" id="duration" class="form-control">
-                    <option value="One Year">One Year</option>
-                    <option value="Two Year">Two Year</option>
-                    <option value="Three Year">Three Year</option>
-                    <option value="Four Year">Four Year</option>
-                    <option value="Five Year">Five Year</option>
+                <select required name="duration" id="duration" class="form-control">
+                    <option value="One Year" {% if user.duration == "One Year" %}selected{% endif %} >One Year</option>
+                    <option value="Two Year" {% if user.duration == "Two Year" %}selected{% endif %}>Two Year</option>
+                    <option value="Three Year" {% if user.duration == "Three Year" %}selected{% endif %}>Three Year</option>
+                    <option value="Four Year" {% if user.duration == "Four Year" %}selected{% endif %}>Four Year</option>
+                    <option value="Five Year" {% if user.duration == "Five Year" %}selected{% endif %}>Five Year</option>
                 </select>
             </div>
             <br><br>
             <div class="form-group">
-                <a href="#" class="btn btn-danger">Reset Values</a>
+                <a href="./details?id={{ user.id }}" class="btn btn-danger">Reset Values</a>
                 <input type="submit" value="Update Data" class="btn btn-success">
             </div>
             <br><br>

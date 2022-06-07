@@ -1,6 +1,7 @@
 import datetime
 from io import BytesIO
 
+import xlwt
 from django.contrib import messages
 from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.models import User
@@ -142,8 +143,9 @@ def certificate_request_details(request):
         return render(request, 'cer_details.html', {'user': user, 'certificate': certificate})
     except UserModel.DoesNotExist:
         print("Error")
+        messages.info(request, "No User Found")
     except CertificateRequestModel.DoesNotExist:
-        print("Np Certificate Found")
+        messages.info(request, "No Certificate Found")
     return redirect('/')
 
 
@@ -186,15 +188,17 @@ def user_list(request):
         try:
             excel_file = request.FILES["user-file"]
         except MultiValueDictKeyError:
-            print("ERROR")
-            return None
+            messages.info(request, "File not found")
+            users = UserModel.objects.all()
+            return render(request, 'users.html', {'users': users})
         if str(excel_file).split('.')[-1] == "xls":
             data = xls_get(excel_file)
         elif str(excel_file).split(".")[-1] == "xlsx":
             data = xlsx_get(excel_file)
         else:
-            print("No File found")
-            return None
+            messages.info(request, "Spreadsheet File not found(required xls/xlsx format)")
+            users = UserModel.objects.all()
+            return render(request, 'users.html', {'users': users})
         users = data["users"]
         for user in users:
             if user[0] == "id":
@@ -202,14 +206,14 @@ def user_list(request):
                 if format_maintained(user):
                     continue
                 else:
-                    print("format not maintained")
-                    return None
+                    messages.info(request, "File Format not maintained")
+                    users = UserModel.objects.all()
+                    return render(request, 'users.html', {'users': users})
             user_data = map_to_user_model(user)
             # check if the user exists
             try:
                 # if exists then update
                 c_user = UserModel.objects.get(uid=user_data.uid)
-                print(c_user.uid)
                 user_data.id = c_user.id
                 user_data.save()
             except UserModel.DoesNotExist:
@@ -260,4 +264,90 @@ def format_maintained(user):
 
 
 def details(request):
-    return render(request, 'details.html')
+    user_details = UserModel.objects.get(id=request.GET["id"])
+    if request.method == "POST":
+        print("post data acquired")
+        user_details.name = request.POST["name"]
+        user_details.email = request.POST["email"]
+        user_details.gender = request.POST["gender"]
+        user_details.category = request.POST["category"]
+        user_details.caste = request.POST["caste"]
+        user_details.sub_caste = request.POST["sub_caste"]
+        user_details.nationality = request.POST["nationality"]
+        user_details.regNo = request.POST["regNo"]
+        user_details.mobile = request.POST["mobile"]
+        user_details.div = request.POST["division"]
+        user_details.profile = request.POST["profile"]
+        user_details.year = request.POST["year"]
+        user_details.degree = request.POST["degree"]
+        user_details.course = request.POST["course"]
+        user_details.duration = request.POST["duration"]
+        user_details.save()
+        messages.info(request, "User Data Updated.")
+    return render(request, 'details.html', {'user': user_details})
+
+
+def download_excel_data(request):
+    # content-type of response
+    response = HttpResponse(content_type='application/ms-excel')
+
+    # decide file name
+    response['Content-Disposition'] = 'attachment; filename="sdp_users.xls"'
+
+    # creating workbook
+    wb = xlwt.Workbook(encoding='utf-8')
+
+    # adding sheet
+    ws = wb.add_sheet("users")
+
+    # Sheet header, first row
+    row_num = 0
+
+    font_style = xlwt.XFStyle()
+    # headers are bold
+    font_style.font.bold = True
+
+    # column header names, you can use your own headers here
+    columns = ['id', 'uid', 'password', 'f_name', 'l_name', 'email', 'gender', 'category', 'caste', 'sub_caste',
+               'nationality', 'regNo', 'mobile', 'div', 'profile', 'year', 'degree', 'course', 'duration']
+
+    # write column headers in sheet
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style)
+
+    # Sheet body, remaining rows
+    font_style = xlwt.XFStyle()
+
+    # get your data, from database or from a text file...
+    data = get_data()  # dummy method to fetch data.
+    for my_row in data:
+        row_num += 1
+        ws.write(row_num, 0, my_row.id, font_style)
+        ws.write(row_num, 1, my_row.uid, font_style)
+        ws.write(row_num, 2, my_row.uid, font_style)
+        ws.write(row_num, 3, my_row.name.split(" ")[0], font_style)
+        ws.write(row_num, 4, my_row.name.split(" ")[1], font_style)
+        ws.write(row_num, 5, my_row.email, font_style)
+        ws.write(row_num, 6, my_row.gender, font_style)
+        ws.write(row_num, 7, my_row.category, font_style)
+        ws.write(row_num, 8, my_row.caste, font_style)
+        ws.write(row_num, 9, my_row.sub_caste, font_style)
+        ws.write(row_num, 10, my_row.nationality, font_style)
+        ws.write(row_num, 11, my_row.regNo, font_style)
+        ws.write(row_num, 12, my_row.mobile, font_style)
+        ws.write(row_num, 13, my_row.div, font_style)
+        ws.write(row_num, 14, my_row.profile, font_style)
+        ws.write(row_num, 15, my_row.year, font_style)
+        ws.write(row_num, 16, my_row.degree, font_style)
+        ws.write(row_num, 17, my_row.course, font_style)
+        ws.write(row_num, 18, my_row.duration, font_style)
+    wb.save(response)
+    return response
+
+
+def get_data():
+    u = UserModel.objects.all()
+    x = []
+    for user in u:
+        x.append(user)
+    return x

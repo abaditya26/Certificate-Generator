@@ -15,5 +15,6 @@ urlpatterns = [
     path('admin_view_certificates', views.admin_certificates_page),
     path('admin_certificate_req', views.certificate_request_details),
     path('users', views.user_list),
-    path('details', views.details)
+    path('details', views.details),
+    path('download_user_data', views.download_excel_data)
 ]
