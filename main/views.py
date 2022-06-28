@@ -114,7 +114,7 @@ def admin(request):
 
 
 def admin_certificates_page(request):
-    certificate_list = CertificateRequestModel.objects.order_by('request_date').order_by('approved').all()
+    certificate_list = CertificateRequestModel.objects.order_by('approved', '-request_date').all()
     if len(certificate_list) == 0:
         no_certificates = True
     else:
